@@ -1,12 +1,12 @@
-import { PoolClient, getConfig } from "@trusttrove/sdk";
+import { PoolClient, getConfig, toUsdc } from "@trusttrove/sdk";
 
-const USDC_STROOPS = 10_000_000n;
-
-function formatUsdc(value: bigint): string {
-  const whole = value / USDC_STROOPS;
-  const fractional = (value % USDC_STROOPS).toString().padStart(7, "0");
-  const trimmedFractional = fractional.replace(/0+$/, "");
-  return trimmedFractional ? `${whole}.${trimmedFractional}` : `${whole}`;
+/**
+ * Pool stats are denominated in stroops, so the SDK formatter is the single
+ * source of truth for how an amount is rendered. Going through it keeps this
+ * command's output at the same two-decimal precision as `list-invoices`.
+ */
+export function formatUsdc(value: bigint): string {
+  return toUsdc(value);
 }
 
 export interface CheckPoolBalanceOptions {
